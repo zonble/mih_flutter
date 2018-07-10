@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'api.dart';
+import 'ad_list.dart';
+import 'about.dart';
 
 void main() => runApp(new MyApp());
 
@@ -17,67 +19,49 @@ class MyApp extends StatelessWidget {
 }
 
 class HomePage extends StatefulWidget {
-  HomePage({Key key, this.title}) : super(key: key);
   final String title;
+
+  HomePage({Key key, this.title}) : super(key: key);
 
   @override
   _HomePageState createState() => new _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
-  _makeCard(Ad ad) {
-    return new Card(
-      margin: EdgeInsets.all(10.0),
-      child: new DecoratedBox(
-          decoration: new BoxDecoration(
-              shape: BoxShape.rectangle,
-              image: new DecorationImage(
-                  fit: BoxFit.fitWidth, image: NetworkImage(ad.imageURL)))),
-    );
+class _HomePageState extends State<HomePage>
+    with SingleTickerProviderStateMixin {
+  TabController _tabController;
+
+  AdList adList = AdList(future: MoneyInfoHubAPI.fetchAds());
+  About about = About();
+
+  final List<Tab> myTabs = <Tab>[
+    new Tab(text: 'Home'),
+    new Tab(text: 'About'),
+  ];
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
   }
 
-  _makeCardList(List<Ad> list) {
-    final delegate = new SliverGridDelegateWithMaxCrossAxisExtent(
-        childAspectRatio: 1.2,
-        mainAxisSpacing: 0.0,
-        crossAxisSpacing: 0.0,
-        maxCrossAxisExtent: 250.0);
-    return new Scrollbar(
-      child: new GridView.builder(
-          itemCount: list.length,
-          gridDelegate: delegate,
-          itemBuilder: (context, index) {
-            Ad ad = list[index];
-            return _makeCard(ad);
-          }),
-    );
-  }
-
-  _makeText(String text) {
-    return new Center(
-      child: new Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[new Text(text)],
-      ),
-    );
+  @override
+  void initState() {
+    super.initState();
+    _tabController = new TabController(vsync: this, length: myTabs.length);
   }
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
+    return Scaffold(
         appBar: AppBar(
           title: Text(widget.title),
+          bottom: new TabBar(
+            tabs: myTabs,
+            controller: _tabController,
+          ),
         ),
-        body: new FutureBuilder(
-            future: MoneyInfoHubAPI.fetchAds(),
-            builder: (context, snapshot) {
-              if (snapshot.data != null) {
-                List<Ad> list = snapshot.data;
-                return _makeCardList(list);
-              } else if (snapshot.error != null) {
-                return _makeText(snapshot.error.toString());
-              }
-              return _makeText('Loading');
-            }));
+        body: new TabBarView(
+            controller: _tabController, children: [adList, about]));
   }
 }

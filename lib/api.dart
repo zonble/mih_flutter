@@ -24,7 +24,7 @@ class MoneyInfoHubAPI {
       final url = match.group(1).trim();
       final name = match.group(2).trim();
       final imageURL = match.group(3).trim();
-      return Ad(url, name, imageURL);
+      return Ad(name, url, imageURL);
     }).toList();
   }
 }
