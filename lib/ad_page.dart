@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'api.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:moneyinfohub/api.dart';
 import 'photo_hero.dart';
 
 class AdPage extends StatefulWidget {
@@ -22,11 +23,26 @@ class AdPageState extends State<AdPage> {
             child: Column(
           children: <Widget>[
             Container(
-              width: MediaQuery.of(context).size.width,
+                width: MediaQuery.of(context).size.width,
                 child: PhotoHero(
-              imageURL: this.widget.ad.imageURL,
-              width: MediaQuery.of(context).size.width,
-            ))
+                  imageURL: this.widget.ad.imageURL,
+                  width: MediaQuery.of(context).size.width,
+                )),
+            Container(
+              padding: EdgeInsets.all(20.0),
+              child: RaisedButton(
+                color: Theme.of(context).primaryColor,
+                onPressed: () {
+                  var url = this.widget.ad.url;
+                  print(url);
+                  launch(url);
+                },
+                child: Text(
+                  'Visit Web Site',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            )
           ],
         )));
   }

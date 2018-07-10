@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'api.dart';
+import 'package:moneyinfohub/api.dart';
 import 'ad_list.dart';
+import 'region_list.dart';
 import 'about.dart';
 
 void main() => runApp(new MyApp());
@@ -32,10 +33,12 @@ class _HomePageState extends State<HomePage>
   TabController _tabController;
 
   AdList adList = AdList(future: MoneyInfoHubAPI.fetchAds());
+  RegionList regionList = RegionList();
   About about = About();
 
   final List<Tab> myTabs = <Tab>[
     new Tab(text: 'Home'),
+    new Tab(text: 'Regions'),
     new Tab(text: 'About'),
   ];
 
@@ -62,6 +65,6 @@ class _HomePageState extends State<HomePage>
           ),
         ),
         body: new TabBarView(
-            controller: _tabController, children: [adList, about]));
+            controller: _tabController, children: [adList, regionList, about]));
   }
 }

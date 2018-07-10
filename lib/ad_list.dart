@@ -1,12 +1,36 @@
 import 'package:flutter/material.dart';
+import 'package:moneyinfohub/api.dart';
 import 'dart:async';
-import 'api.dart';
 import 'photo_hero.dart';
 import 'ad_page.dart';
 
+class AdListPage extends StatefulWidget {
+  String title;
+  Future future;
+
+  AdListPage({Key key, this.title, this.future});
+
+  @override
+  State<StatefulWidget> createState() {
+    return new AdListPageState();
+  }
+}
+
+class AdListPageState extends State<AdListPage> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: new Text(this.widget.title)),
+      body: AdList(
+        future: this.widget.future,
+      ),
+    );
+  }
+}
 
 class AdList extends StatefulWidget {
   Future future;
+
   AdList({Key key, this.future});
 
   @override
@@ -16,7 +40,6 @@ class AdList extends StatefulWidget {
 }
 
 class AdListState extends State<AdList> {
-
   _makeCard(Ad ad, BuildContext context) {
     return new Card(
       margin: EdgeInsets.all(10.0),
@@ -25,9 +48,7 @@ class AdListState extends State<AdList> {
         width: MediaQuery.of(context).size.width,
         onTap: () {
           Navigator.of(context).push(new MaterialPageRoute(builder: (context) {
-            return new AdPage(
-              ad: ad,
-            );
+            return new AdPage(ad: ad,);
           }));
         },
       ),
