@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:moneyinfohub/api.dart';
 import 'ad_list.dart';
 import 'region_list.dart';
@@ -11,6 +12,14 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return new MaterialApp(
       title: 'Money Info Hub',
+      localizationsDelegates: [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ],
+      supportedLocales: [
+        const Locale('en', 'US'), // English
+        const Locale('zh', 'TW'), // Chinese
+      ],
       theme: new ThemeData(
         primarySwatch: Colors.red,
       ),

@@ -25,8 +25,6 @@ class RegionListState extends State<RegionList> {
                 future: MoneyInfoHubAPI.fetchAdsForRegion(region[1]),
               );
 
-              final builder = new PageRouteBuilder(pageBuilder:
-              );
               Navigator
                   .of(context)
                   .push(MaterialPageRoute(builder: (context) => page));

@@ -20,9 +20,9 @@ class AdListPageState extends State<AdListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: new Text(this.widget.title)),
       body: AdList(
         future: this.widget.future,
+        title: this.widget.title,
       ),
     );
   }
@@ -30,8 +30,9 @@ class AdListPageState extends State<AdListPage> {
 
 class AdList extends StatefulWidget {
   Future future;
+  String title;
 
-  AdList({Key key, this.future});
+  AdList({Key key, this.future, this.title});
 
   @override
   State<StatefulWidget> createState() {
@@ -40,39 +41,50 @@ class AdList extends StatefulWidget {
 }
 
 class AdListState extends State<AdList> {
-  _makeCard(Ad ad, BuildContext context) {
+  Widget _makeCard(Ad ad, BuildContext context) {
     return new Card(
       margin: EdgeInsets.all(10.0),
       child: new PhotoHero(
         imageURL: ad.imageURL,
-        width: MediaQuery.of(context).size.width,
+        width: MediaQuery
+            .of(context)
+            .size
+            .width,
         onTap: () {
           Navigator.of(context).push(new MaterialPageRoute(builder: (context) {
-            return new AdPage(ad: ad,);
+            return new AdContentPage(
+              ad: ad,
+            );
           }));
         },
       ),
     );
   }
 
-  _makeCardList(List<Ad> list, BuildContext context) {
+  Widget _makeCardList(List<Ad> list, String title, BuildContext context) {
     final delegate = new SliverGridDelegateWithMaxCrossAxisExtent(
         childAspectRatio: 1.2,
         mainAxisSpacing: 0.0,
         crossAxisSpacing: 0.0,
         maxCrossAxisExtent: 250.0);
-    return Scrollbar(
-      child: GridView.builder(
-          itemCount: list.length,
-          gridDelegate: delegate,
-          itemBuilder: (context, index) {
-            Ad ad = list[index];
-            return _makeCard(ad, context);
-          }),
+    var slivers = <Widget>[];
+    if (title != null) {
+      final appbar = SliverAppBar(title: Text(title),);
+      slivers.add(appbar);
+    }
+    final gridView = SliverGrid(
+        gridDelegate: delegate,
+        delegate: new SliverChildListDelegate(
+            list.map((ad) => _makeCard(ad, context)).toList()));
+    slivers.add(gridView);
+    final scrollView = CustomScrollView(
+      slivers: slivers,
     );
+
+    return Scrollbar(child: scrollView);
   }
 
-  _makeText(String text) {
+  Widget _makeText(String text) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -88,7 +100,7 @@ class AdListState extends State<AdList> {
         builder: (context, snapshot) {
           if (snapshot.data != null) {
             List<Ad> list = snapshot.data;
-            return _makeCardList(list, context);
+            return _makeCardList(list, this.widget.title, context);
           } else if (snapshot.error != null) {
             return _makeText(snapshot.error.toString());
           }
